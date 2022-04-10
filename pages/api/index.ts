@@ -5,19 +5,19 @@ import { useState } from "react";
 connectDB();
 
 export default async (req: NextApiRequest, res: NextApiResponse) => {
-  const [date, setDate] = useState("Fri Apr 08 2022");
   const dateTime = new Date();
   const today = dateTime.getDay();
   const saturday = 6;
   const sunday = 0;
   const isWeekend = today === saturday || today === sunday;
-  isWeekend ? date : setDate(dateTime.toDateString());
+  let setWeekday = "Fri Apr 08 2022";
+  isWeekend ? setWeekday : (setWeekday = dateTime.toDateString());
   const { method } = req;
   switch (method) {
     case "GET":
       try {
         const getData = await StockModel.find({
-          date: date,
+          date: setWeekday,
         });
         res.status(200).json(getData);
       } catch {
