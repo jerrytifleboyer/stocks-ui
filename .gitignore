@@ -33,3 +33,10 @@ yarn-error.log*
 
 # typescript
 *.tsbuildinfo
+
+#backend
+/backend
+
+#your master list and random notes
+masterList.ts
+notes.js
