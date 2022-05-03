@@ -8,6 +8,6 @@ const stockSchema = new mongoose.Schema({
   time: [Number],
 });
 
-const COLLECTION_NAME = "test";
-export default mongoose.models.test ||
+const COLLECTION_NAME = "ticker";
+export default mongoose.models.ticker ||
   mongoose.model(COLLECTION_NAME, stockSchema);

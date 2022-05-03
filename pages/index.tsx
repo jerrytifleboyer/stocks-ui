@@ -1,61 +1,41 @@
 import React, { useState, useEffect } from "react";
-import Chart from "../components/Chart";
 import Header from "../components/Header";
+import Tabs from "../components/Tabs";
+import Watchlist from "../components/Watchlist";
+import Notes from "../components/Notes";
+import checkIfMarketOpen from "../backend/checkIfMarketOpen";
+
+const everyTwoMinutes = 1000 * 120;
 
 export default function index() {
+  const { marketOpen } = checkIfMarketOpen();
   const [stockData, setStockData] = useState<any[]>([]);
-  const getData = async () => {
-    try {
-      const request = await fetch("/api");
-      const data = await request.json();
-      setStockData(data);
-    } catch {
-      console.log("could not fetch stock data");
-    }
-  };
+  const [tab, setTab] = useState<number>(1);
+
   useEffect(() => {
+    const getData = async () => {
+      try {
+        const request = await fetch("/api/watchlist");
+        const data = await request.json();
+        setStockData(data);
+      } catch {
+        console.log("could not fetch data");
+      }
+      if (marketOpen) {
+        setTimeout(getData, everyTwoMinutes);
+      }
+    };
     getData();
   }, []);
 
   return (
-    <div className="bg-gradient-to-r from-indigo-400 to-indigo-500">
+    <div className="min-h-screen bg-gradient-to-r from-indigo-400 to-indigo-500">
       <Header />
+      <Tabs tab={tab} setTab={setTab} />
       <div className="flex justify-center content-center">
-        <div className="my-4 py-4 w-3/4 border-2 bg-zinc-300 rounded">
-          <div className="flex flex-wrap justify-evenly gap-y-4">
-            {stockData.map((stock) => (
-              <div
-                className="w-64 border-2 rounded border-black"
-                key={stock._id}
-              >
-                <div className="flex">
-                  <div className="px-2">{stock.ticker}</div>
-                  <div className="flex-grow" />
-                  <div
-                    className={
-                      stock.price[stock.price.length - 1] >
-                      stock.previousClosePrice
-                        ? "text-emerald-600"
-                        : "text-red-700"
-                    }
-                  >
-                    {stock.price[stock.price.length - 1].toFixed(2)}
-                  </div>
-                  <div className="px-1">
-                    (
-                    {(
-                      ((stock.price[stock.price.length - 1] -
-                        stock.previousClosePrice) /
-                        stock.previousClosePrice) *
-                      100
-                    ).toFixed(2)}
-                    % )
-                  </div>
-                </div>
-                <Chart stockData={stock} />
-              </div>
-            ))}
-          </div>
+        <div className="py-4 w-4/5 border-2 bg-indigo-50 rounded">
+          <Watchlist tab={tab} stockData={stockData} />
+          <Notes tab={tab} stockData={stockData} />
         </div>
       </div>
     </div>
