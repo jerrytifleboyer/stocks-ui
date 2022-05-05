@@ -9,7 +9,7 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
   let setWeekday: string = toLastFriday.toDateString();
   isWeekend ? setWeekday : (setWeekday = todaysDate);
 
-  const { method } = req;
+  const { method, body } = req;
   switch (method) {
     case "GET":
       try {
@@ -21,5 +21,12 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
         res.status(400).json({ error: "unable to get data" });
       }
       break;
+    case "POST":
+      try {
+        const note = await NotesModel.create(body);
+        res.status(201).json(note);
+      } catch {
+        res.status(400).json({ error: "unable to update data" });
+      }
   }
 };

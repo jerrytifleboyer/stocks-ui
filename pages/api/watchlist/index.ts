@@ -9,6 +9,7 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
   let setWeekday: string = toLastFriday.toDateString();
   isWeekend ? setWeekday : (setWeekday = todaysDate);
   const { method } = req;
+
   switch (method) {
     case "GET":
       try {

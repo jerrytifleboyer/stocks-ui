@@ -8,7 +8,7 @@ import checkIfMarketOpen from "../backend/checkIfMarketOpen";
 const everyTwoMinutes = 1000 * 120;
 
 export default function index() {
-  const { marketOpen } = checkIfMarketOpen();
+  const marketOpen = checkIfMarketOpen();
   const [stockData, setStockData] = useState<any[]>([]);
   const [tab, setTab] = useState<number>(1);
 
@@ -29,7 +29,7 @@ export default function index() {
   }, []);
 
   return (
-    <div className="min-h-screen bg-gradient-to-r from-indigo-400 to-indigo-500">
+    <div className="min-h-screen bg-indigo-300">
       <Header />
       <Tabs tab={tab} setTab={setTab} />
       <div className="flex justify-center content-center">

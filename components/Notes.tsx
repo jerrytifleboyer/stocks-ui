@@ -1,52 +1,86 @@
 import { useState } from "react";
+import connectFinnhub from "../backend/connectFinnhub";
+import { DataInterface } from "../utils/interfaces/BackendInterfaces";
 
 export default function Notes({ tab, stockData }: any) {
-  const [arr, setArr] = useState([]);
+  let foundInNotes = false;
+  let foundInDB = false;
+  const [noteList, setNoteList] = useState([]);
   const [ticker, setTicker] = useState("");
   const [priceTarget, setPriceTarget] = useState("");
   const [notes, setNotes] = useState("");
+  const [message, setMessage] = useState("");
 
-  const pullFromDB = async (e: any) => {
-    e.preventDefault();
-    const response = await fetch("/api/notes");
-    const data = await response.json();
-
-    [...arr].forEach((e) => {
-      console.log("here");
-      if (e.ticker === ticker) {
-        console.log("already in list");
-      } else {
-        for (let ii of data) {
-          if (ticker == ii.ticker) {
+  const addNewNote = () => {
+    for (let stock of stockData) {
+      //ticker is in the DB
+      if (stock.ticker === ticker) {
+        const newNote = {
+          ticker,
+          currPrice: stock.price[stock.price.length - 1],
+          priceTarget,
+          notes,
+        };
+        const newNotes = [...noteList, newNote];
+        setNoteList(newNotes);
+        foundInDB = true;
+        break;
+      }
+    }
+    //ticker is not in the DB, quick fetch to the API to get the current price
+    if (!foundInDB) {
+      const finnhub = connectFinnhub();
+      finnhub.quote(
+        ticker,
+        (err: string, data: DataInterface, response: any) => {
+          if (response?.status === 200) {
             const newNote = {
-              id: ii._id,
-              ticker: ticker,
-              currPrice: ii.price[ii.price.length - 1],
+              ticker,
+              currPrice: data["c"].toFixed(2) || 0,
               priceTarget,
               notes,
             };
-            const newNotes = [...arr, newNote];
-            setArr(newNotes);
+            const newNotes = [...noteList, newNote];
+            setNoteList(newNotes);
           }
         }
-      }
-    });
+      );
+    }
+  };
 
+  const handleSubmit = async (e: any) => {
+    e.preventDefault();
+    if (noteList.length) {
+      for (let note of noteList) {
+        if (note.ticker === ticker) {
+          console.log("ticker already in notes list");
+          foundInNotes = true;
+          break;
+        }
+      }
+      if (!foundInNotes) {
+        addNewNote();
+      }
+    } else {
+      addNewNote();
+    }
     e.target.reset();
   };
+
   const removeNote = () => {};
 
   return (
-    <div className={tab === 2 ? "" : "hidden"} onSubmit={pullFromDB}>
+    <div className={tab === 2 ? "" : "hidden"} onSubmit={handleSubmit}>
       <form>
         {/* input fields to write notes*/}
-        <div className="flex justify-center items-center ">
+        <div className="flex justify-center items-center">
           <input
             placeholder="Search for ticker..."
-            className="w-64 border-2 truncate mx-1 col-start-1"
+            className="w-64 truncate mx-1 py-1"
             onChange={(e) => {
               setTicker(e.target.value.toUpperCase());
             }}
+            name="ticker"
           />
           <button
             type="submit"
@@ -56,8 +90,10 @@ export default function Notes({ tab, stockData }: any) {
           </button>
         </div>
       </form>
+
       {/* dynamically generated notes */}
-      {arr.length ? (
+      {/* header */}
+      {noteList.length ? (
         <div className="grid grid-cols-10">
           <div className="font-bold mx-1 col-start-1 truncate">Ticker</div>
           <div className="font-bold mx-1 col-start-2 truncate">
@@ -67,8 +103,9 @@ export default function Notes({ tab, stockData }: any) {
           <div className="font-bold col-start-4 mx-1 truncate">Notes</div>
         </div>
       ) : null}
-      {arr.map((e) => (
-        <div className="flex" key={e.id}>
+      {/* actual notes list */}
+      {noteList.map((e) => (
+        <div className="flex" key={e.ticker}>
           <div className="border-2">{e.ticker}</div>
           <div className="border-2">{e.currPrice}</div>
           <input className="border-2 mx-1" />

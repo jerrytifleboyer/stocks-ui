@@ -6,6 +6,8 @@ const stockSchema = new mongoose.Schema({
   previousClosePrice: Number,
   price: [Number],
   time: [Number],
+  priceTarget: String,
+  notes: String,
 });
 
 const COLLECTION_NAME = "ticker";
