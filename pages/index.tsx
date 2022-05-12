@@ -5,21 +5,22 @@ import Watchlist from "../components/Watchlist";
 import Notes from "../components/Notes";
 import checkIfMarketOpen from "../backend/checkIfMarketOpen";
 
-const everyTwoMinutes = 1000 * 120;
+const everyTwoMinutes = 1000 * 60 * 2;
 
 export default function index() {
   const marketOpen = checkIfMarketOpen();
-  const [stockData, setStockData] = useState<any[]>([]);
+  const [stockData, setStockData] = useState<object[]>([]);
   const [tab, setTab] = useState<number>(1);
 
+  //fetches data every 2 minutes when market is open
   useEffect(() => {
     const getData = async () => {
       try {
-        const request = await fetch("/api/watchlist");
-        const data = await request.json();
+        const response = await fetch("/api/watchlist");
+        const data = await response.json();
         setStockData(data);
       } catch {
-        console.log("could not fetch data");
+        console.log("could not get watchlist data");
       }
       if (marketOpen) {
         setTimeout(getData, everyTwoMinutes);
@@ -30,12 +31,12 @@ export default function index() {
 
   return (
     <div className="min-h-screen bg-indigo-300">
-      <Header />
+      <Header content="My Stock Watchlist" />
       <Tabs tab={tab} setTab={setTab} />
       <div className="flex justify-center content-center">
         <div className="py-4 w-4/5 border-2 bg-indigo-50 rounded">
           <Watchlist tab={tab} stockData={stockData} />
-          <Notes tab={tab} stockData={stockData} />
+          <Notes tab={tab} />
         </div>
       </div>
     </div>

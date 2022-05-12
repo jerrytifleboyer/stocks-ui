@@ -1,10 +1,10 @@
-export default function Header() {
+export default function Header({ content }: string) {
   return (
     <>
       <header className="flex justify-center items-center font-bold text-xl underline p-2">
-        My Stock Watchlist
+        {content}
       </header>
-      <hr />
+      <hr className="mb-2" />
     </>
   );
 }

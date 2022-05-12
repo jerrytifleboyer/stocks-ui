@@ -41,3 +41,4 @@ yarn-error.log*
 masterList.ts
 notes.js
 newFeatures.js
+/pages/test.tsx

@@ -1,32 +1,30 @@
 import type { NextApiRequest, NextApiResponse } from "next";
-import connectDB from "../../../backend/connectDB";
-import NotesModel from "../../../models/NotesModel";
-import checkIfWeekend from "../../../backend/checkIfWeekend";
-connectDB();
+import StockModel from "../../../models/StockModel";
 
 export default async (req: NextApiRequest, res: NextApiResponse) => {
-  const { isWeekend, toLastFriday, todaysDate } = checkIfWeekend();
-  let setWeekday: string = toLastFriday.toDateString();
-  isWeekend ? setWeekday : (setWeekday = todaysDate);
-
   const { method, body } = req;
+
   switch (method) {
     case "GET":
       try {
-        const getData = await NotesModel.find({
-          date: "Fri Apr 08 2022",
+        const getData = await StockModel.find({
+          $or: [{ priceTarget: { $ne: "" } }, { notes: { $ne: "" } }],
         });
         res.status(200).json(getData);
       } catch {
-        res.status(400).json({ error: "unable to get data" });
+        res.status(400).json({ error: "unable to get notes" });
       }
       break;
-    case "POST":
+    case "PATCH":
       try {
-        const note = await NotesModel.create(body);
-        res.status(201).json(note);
+        const updateData = await StockModel.updateOne(
+          { ticker: body.ticker },
+          { $set: body }
+        );
+        res.status(200).json(updateData);
       } catch {
-        res.status(400).json({ error: "unable to update data" });
+        res.status(500).json({ error: "unable to update notes" });
       }
+      break;
   }
 };

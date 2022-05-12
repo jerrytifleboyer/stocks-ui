@@ -1,55 +1,60 @@
-import { useState } from "react";
-import connectFinnhub from "../backend/connectFinnhub";
+import { useState, useEffect } from "react";
+import Modal from "./Modal";
 import { DataInterface } from "../utils/interfaces/BackendInterfaces";
+import connectFinnhub from "../backend/connectFinnhub";
 
-export default function Notes({ tab, stockData }: any) {
+export default function Notes({ tab }: any) {
   let foundInNotes = false;
-  let foundInDB = false;
-  const [noteList, setNoteList] = useState([]);
-  const [ticker, setTicker] = useState("");
-  const [priceTarget, setPriceTarget] = useState("");
-  const [notes, setNotes] = useState("");
-  const [message, setMessage] = useState("");
+  const [noteList, setNoteList] = useState<object[]>([]);
+  const [fetchData, setFetchData] = useState<object[]>([]);
+  const [modalOpen, setModalOpen] = useState<boolean>(false);
+  const [editNote, setEditNote] = useState<object>({});
+  const [ticker, setTicker] = useState<string>("");
 
-  const addNewNote = () => {
-    for (let stock of stockData) {
-      //ticker is in the DB
+  const [stuff, setStuff] = useState({});
+
+  //load notes from db
+  useEffect(() => {
+    const loadSavedNotes = async () => {
+      try {
+        const response = await fetch("api/notes");
+        const data = await response.json();
+        setNoteList(data);
+      } catch {
+        console.log("could not load notes");
+      }
+    };
+    loadSavedNotes();
+  }, []);
+
+  //get stock data, used to compare what tickers im collecting data for
+  useEffect(() => {
+    const getStockData = async () => {
+      try {
+        const response = await fetch("api/watchlist");
+        const data = await response.json();
+        setFetchData(data);
+      } catch {
+        console.log("could not get stock data for my notes");
+      }
+    };
+    getStockData();
+  }, []);
+
+  const addToNotelist = () => {
+    for (let stock of fetchData) {
       if (stock.ticker === ticker) {
-        const newNote = {
-          ticker,
-          currPrice: stock.price[stock.price.length - 1],
-          priceTarget,
-          notes,
-        };
-        const newNotes = [...noteList, newNote];
+        const newNotes = [...noteList, stock];
         setNoteList(newNotes);
-        foundInDB = true;
-        break;
       }
     }
-    //ticker is not in the DB, quick fetch to the API to get the current price
-    if (!foundInDB) {
-      const finnhub = connectFinnhub();
-      finnhub.quote(
-        ticker,
-        (err: string, data: DataInterface, response: any) => {
-          if (response?.status === 200) {
-            const newNote = {
-              ticker,
-              currPrice: data["c"].toFixed(2) || 0,
-              priceTarget,
-              notes,
-            };
-            const newNotes = [...noteList, newNote];
-            setNoteList(newNotes);
-          }
-        }
-      );
-    }
+    //TODO, handle addnote if it's not found in DB, find on Finnhub instead
   };
 
   const handleSubmit = async (e: any) => {
     e.preventDefault();
+    //TODO set a warning in the front end instead of a CL
+    //checking if it's in your notes already
     if (noteList.length) {
       for (let note of noteList) {
         if (note.ticker === ticker) {
@@ -58,29 +63,38 @@ export default function Notes({ tab, stockData }: any) {
           break;
         }
       }
+      //if not add it
       if (!foundInNotes) {
-        addNewNote();
+        addToNotelist();
       }
-    } else {
-      addNewNote();
+    }
+    //notes is empty, adds new note
+    else {
+      addToNotelist();
     }
     e.target.reset();
   };
 
-  const removeNote = () => {};
+  const removeNote = (index: number) => {
+    noteList.splice(index, 1);
+    setNoteList([...noteList]);
+  };
+
+  const editButton = () => {
+    setModalOpen(true);
+  };
 
   return (
-    <div className={tab === 2 ? "" : "hidden"} onSubmit={handleSubmit}>
-      <form>
+    <div className={tab === 2 ? "" : "hidden"}>
+      <form className="mb-2" onSubmit={handleSubmit}>
         {/* input fields to write notes*/}
         <div className="flex justify-center items-center">
           <input
             placeholder="Search for ticker..."
-            className="w-64 truncate mx-1 py-1"
+            className="w-64 truncate mx-1 p-1"
             onChange={(e) => {
               setTicker(e.target.value.toUpperCase());
             }}
-            name="ticker"
           />
           <button
             type="submit"
@@ -94,27 +108,69 @@ export default function Notes({ tab, stockData }: any) {
       {/* dynamically generated notes */}
       {/* header */}
       {noteList.length ? (
-        <div className="grid grid-cols-10">
-          <div className="font-bold mx-1 col-start-1 truncate">Ticker</div>
-          <div className="font-bold mx-1 col-start-2 truncate">
-            Current Price
+        <div className="flex">
+          <div className="font-bold w-20 flex justify-center truncate">
+            Ticker
           </div>
-          <div className="font-bold col-start-3 truncate">Price Target</div>
-          <div className="font-bold col-start-4 mx-1 truncate">Notes</div>
+          <div className="font-bold w-24 truncate">Current Price</div>
+          <div className="font-bold w-24 truncate">Price Target</div>
+          <div className="font-bold flex-grow flex justify-center truncate">
+            Notes
+          </div>
+          <div className="px-4"></div>
         </div>
       ) : null}
+
       {/* actual notes list */}
-      {noteList.map((e) => (
-        <div className="flex" key={e.ticker}>
-          <div className="border-2">{e.ticker}</div>
-          <div className="border-2">{e.currPrice}</div>
-          <input className="border-2 mx-1" />
-          <input className="border-2 flex-grow" />
-          <button onClick={removeNote} className="border-2">
+      {noteList.map((e: any, index) => (
+        <div className="flex" key={index}>
+          <div className="border-y-2 w-20 flex justify-center">{e.ticker}</div>
+          <div className="border-2 w-24 flex justify-center">
+            $ {e.price[e.price.length - 1]}
+          </div>
+          <div className="border-y-2 w-24 flex justify-center">
+            {e.priceTarget ? (
+              <div>$ {e.priceTarget}</div>
+            ) : (
+              <button
+                onClick={() => {
+                  editButton();
+                  setEditNote(e);
+                }}
+                className="text-blue-400 underline"
+              >
+                Edit
+              </button>
+            )}
+          </div>
+          <div className="border-2 flex-grow flex justify-center">
+            {e.notes ? (
+              e.notes
+            ) : (
+              <button
+                onClick={() => {
+                  editButton();
+                  setEditNote(e);
+                }}
+                className=" text-blue-400 underline"
+              >
+                Edit
+              </button>
+            )}
+          </div>
+          <button onClick={() => removeNote(index)} className="px-2">
             ✖
           </button>
         </div>
       ))}
+
+      {modalOpen ? (
+        <Modal
+          editNote={editNote}
+          setEditNote={setEditNote}
+          setModalOpen={setModalOpen}
+        />
+      ) : null}
     </div>
   );
 }
