@@ -41,4 +41,5 @@ yarn-error.log*
 masterList.ts
 notes.js
 newFeatures.js
+seasonalTrends.js
 /pages/test.tsx

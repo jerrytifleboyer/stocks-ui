@@ -28,7 +28,7 @@ export default function Modal({ editNote, setModalOpen }: any) {
   };
 
   return (
-    <div className="absolute top-0 left-0 bg-black/25 h-screen w-screen flex justify-center items-center">
+    <div className="absolute top-0 left-0 bg-black/25 h-full w-screen flex justify-center items-center">
       <div className="border-2 w-1/2 h-1/2 bg-indigo-100 rounded-xl relative">
         <Header content={`Editing ${editNote.ticker} notes`} />
         <div className="flex justify-center items-center flex-col mb-4">
@@ -38,7 +38,7 @@ export default function Modal({ editNote, setModalOpen }: any) {
             type="number"
             placeholder="e.g: 420.69"
             onChange={(e) => {
-              setPriceTarget(e.target.value);
+              setPriceTarget(e.target.value.trim());
             }}
           />
         </div>
@@ -50,7 +50,7 @@ export default function Modal({ editNote, setModalOpen }: any) {
               className="w-full h-full resize-none pl-1"
               placeholder="e.g: i like the stock!"
               onChange={(e) => {
-                setNotes(e.target.value);
+                setNotes(e.target.value.trim());
               }}
             />
           </div>

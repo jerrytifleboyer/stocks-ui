@@ -1,7 +1,5 @@
 import { useState, useEffect } from "react";
 import Modal from "./Modal";
-import { DataInterface } from "../utils/interfaces/BackendInterfaces";
-import connectFinnhub from "../backend/connectFinnhub";
 
 export default function Notes({ tab }: any) {
   let foundInNotes = false;
@@ -10,8 +8,7 @@ export default function Notes({ tab }: any) {
   const [modalOpen, setModalOpen] = useState<boolean>(false);
   const [editNote, setEditNote] = useState<object>({});
   const [ticker, setTicker] = useState<string>("");
-
-  const [stuff, setStuff] = useState({});
+  const [loading, setLoading] = useState(true);
 
   //load notes from db
   useEffect(() => {
@@ -44,7 +41,7 @@ export default function Notes({ tab }: any) {
   const addToNotelist = () => {
     for (let stock of fetchData) {
       if (stock.ticker === ticker) {
-        const newNotes = [...noteList, stock];
+        const newNotes = [stock, ...noteList];
         setNoteList(newNotes);
       }
     }
@@ -93,7 +90,7 @@ export default function Notes({ tab }: any) {
             placeholder="Search for ticker..."
             className="w-64 truncate mx-1 p-1"
             onChange={(e) => {
-              setTicker(e.target.value.toUpperCase());
+              setTicker(e.target.value.toUpperCase().trim());
             }}
           />
           <button

@@ -34,7 +34,7 @@ export default function index() {
       <Header content="My Stock Watchlist" />
       <Tabs tab={tab} setTab={setTab} />
       <div className="flex justify-center content-center">
-        <div className="py-4 w-4/5 border-2 bg-indigo-50 rounded">
+        <div className="py-4 w-4/5 border-2 bg-indigo-50 rounded mb-4">
           <Watchlist tab={tab} stockData={stockData} />
           <Notes tab={tab} />
         </div>
