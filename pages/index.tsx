@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from "react";
 import Header from "../components/Header";
 import Tabs from "../components/Tabs";
-import Watchlist from "../components/Watchlist";
-import Notes from "../components/Notes";
+import Watchlist from "../components/watchlists/Watchlist";
+import Notes from "../components/notes/Notes";
 import checkIfMarketOpen from "../backend/checkIfMarketOpen";
 
 const everyTwoMinutes = 1000 * 60 * 2;

@@ -1,5 +1,5 @@
 import { useState } from "react";
-import Header from "./Header";
+import Header from "../Header";
 
 export default function Modal({ editNote, setModalOpen }: any) {
   const [priceTarget, setPriceTarget] = useState<string>("");
