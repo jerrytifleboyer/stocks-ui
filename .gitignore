@@ -40,3 +40,7 @@ yarn-error.log*
 #your master list and random notes
 masterList.ts
 notes.js
+newFeatures.js
+seasonalTrends.js
+/pages/test.tsx
+pages/api/*
