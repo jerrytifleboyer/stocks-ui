@@ -43,3 +43,4 @@ notes.js
 newFeatures.js
 seasonalTrends.js
 /pages/test.tsx
+pages/api/*
