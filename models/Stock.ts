@@ -4,6 +4,7 @@ connectDB();
 
 const stockSchema = new mongoose.Schema({
   ticker: String,
+  name: String,
   date: String,
   previousClosePrice: Number,
   priceTarget: String,

@@ -19,6 +19,5 @@ const userSchema = new mongoose.Schema({
 });
 
 const COLLECTION_NAME = "user";
-// const COLLECTION_NAME = "test";
 export default mongoose.models.user ||
   mongoose.model(COLLECTION_NAME, userSchema);

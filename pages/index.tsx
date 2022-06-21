@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { getSession } from "next-auth/react";
 import Header from "../components/Header";
 import Tabs from "../components/Tabs";
 import Watchlist from "../components/watchlists/Watchlist";
@@ -12,9 +13,8 @@ export default function index() {
   const [stockData, setStockData] = useState<object[]>([]);
   const [tab, setTab] = useState<number>(1);
 
-  //fetches data every 2 minutes when market is open
   useEffect(() => {
-    const getData = async () => {
+    const getStockData = async () => {
       try {
         const response = await fetch("/api/watchlist");
         const data = await response.json();
@@ -23,15 +23,15 @@ export default function index() {
         console.log("could not get watchlist data");
       }
       if (marketOpen) {
-        setTimeout(getData, everyTwoMinutes);
+        setTimeout(getStockData, everyTwoMinutes);
       }
     };
-    getData();
+    getStockData();
   }, []);
 
   return (
     <div className="min-h-screen bg-indigo-300">
-      <Header content="My Stock Watchlist" />
+      <Header />
       <Tabs tab={tab} setTab={setTab} />
       <div className="flex justify-center content-center">
         <div className="py-4 w-4/5 border-2 bg-indigo-50 rounded mb-4">
@@ -41,4 +41,19 @@ export default function index() {
       </div>
     </div>
   );
+}
+
+export async function getServerSideProps(context: any) {
+  const sessionActive = await getSession({ req: context.req });
+  if (!sessionActive) {
+    return {
+      redirect: {
+        destination: "/login",
+        permanent: false,
+      },
+    };
+  }
+  return {
+    props: { sessionActive },
+  };
 }

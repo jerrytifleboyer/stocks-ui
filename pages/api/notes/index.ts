@@ -1,5 +1,5 @@
 import type { NextApiRequest, NextApiResponse } from "next";
-import db from "../../../models/Stock";
+import StockModel from "../../../models/Stock";
 
 export default async (req: NextApiRequest, res: NextApiResponse) => {
   const { method, body } = req;
@@ -7,7 +7,7 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
   switch (method) {
     case "GET":
       try {
-        const getData = await db.find({
+        const getData = await StockModel.find({
           $or: [{ priceTarget: { $ne: "" } }, { notes: { $ne: "" } }],
         });
         res.status(200).json(getData);
@@ -17,7 +17,7 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
       break;
     case "PATCH":
       try {
-        const updateData = await db.updateOne(
+        const updateData = await StockModel.updateOne(
           { ticker: body.ticker },
           { $set: body }
         );

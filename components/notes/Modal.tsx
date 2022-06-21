@@ -1,7 +1,6 @@
 import { useState } from "react";
-import Header from "../Header";
 
-export default function Modal({ editNote, setModalOpen }: any) {
+export default function Modal({ editNote, setModalOpen }: any): JSX.Element {
   const [priceTarget, setPriceTarget] = useState<string>("");
   const [notes, setNotes] = useState<string>("");
 
@@ -12,7 +11,11 @@ export default function Modal({ editNote, setModalOpen }: any) {
   const saveToDB = async () => {
     await fetch("api/notes", {
       method: "PATCH",
-      body: JSON.stringify({ ticker: editNote.ticker, priceTarget, notes }),
+      body: JSON.stringify({
+        ticker: editNote.ticker,
+        priceTarget: priceTarget.trim(),
+        notes: notes.trim(),
+      }),
       headers: {
         "Content-Type": "application/json",
       },
@@ -21,56 +24,56 @@ export default function Modal({ editNote, setModalOpen }: any) {
 
   const handleSave = (e: any) => {
     e.preventDefault();
-    editNote.priceTarget = priceTarget;
-    editNote.notes = notes;
+    editNote.priceTarget = priceTarget.trim();
+    editNote.notes = notes.trim();
     saveToDB();
     closeModal();
   };
 
   return (
-    <div className="absolute top-0 left-0 bg-black/25 h-full w-screen flex justify-center items-center">
-      <div className="border-2 w-1/2 h-1/2 bg-indigo-100 rounded-xl relative">
-        <Header content={`Editing ${editNote.ticker} notes`} />
+    <form
+      onSubmit={handleSave}
+      className="absolute top-0 left-0 right-0 bottom-0 bg-black/25 w-full flex justify-center items-center"
+    >
+      <div className="border w-2/5 bg-indigo-100 rounded-xl">
         <div className="flex justify-center items-center flex-col mb-4">
-          <div className="font-bold block">Price Target:</div>
+          <div className="font-bold block pt-8">Price Target:</div>
           <input
             className="pl-1"
             type="number"
             placeholder="e.g: 420.69"
             onChange={(e) => {
-              setPriceTarget(e.target.value.trim());
+              setPriceTarget(e.target.value);
             }}
           />
         </div>
 
         <div className="flex justify-center items-center flex-col h-1/2">
           <div className="font-bold block">Notes:</div>
-          <div className="h-full w-5/6">
-            <textarea
-              className="w-full h-full resize-none pl-1"
-              placeholder="e.g: i like the stock!"
-              onChange={(e) => {
-                setNotes(e.target.value.trim());
-              }}
-            />
-          </div>
+          <textarea
+            className="w-5/6 h-24 resize-none pl-1"
+            placeholder="e.g: i like the stock!"
+            onChange={(e) => {
+              setNotes(e.target.value);
+            }}
+          />
         </div>
 
-        <footer className="absolute bottom-10 right-10">
+        <footer className="flex justify-end p-8">
           <button
             onClick={closeModal}
-            className="rounded-xl px-2 py-1 bg-yellow-300 hover:bg-yellow-400 mr-2"
+            className="rounded-xl px-2 py-1 bg-yellow-300 hover:bg-yellow-400 mr-4"
           >
             Close
           </button>
           <button
-            onClick={handleSave}
+            type="submit"
             className="rounded-xl px-2 py-1 bg-emerald-300 hover:bg-green-400"
           >
             Save
           </button>
         </footer>
       </div>
-    </div>
+    </form>
   );
 }

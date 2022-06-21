@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import Modal from "./Modal";
 
-export default function Notes({ tab }: any) {
+export default function Notes({ tab }: any): JSX.Element {
   let foundInNotes = false;
   const [noteList, setNoteList] = useState<object[]>([]);
   const [fetchData, setFetchData] = useState<object[]>([]);
@@ -65,7 +65,7 @@ export default function Notes({ tab }: any) {
         addToNotelist();
       }
     }
-    //notes is empty, adds new note
+    //there are no notes
     else {
       addToNotelist();
     }
@@ -83,8 +83,8 @@ export default function Notes({ tab }: any) {
 
   return (
     <div className={tab === 2 ? "" : "hidden"}>
+      {/* ticker search bar */}
       <form className="mb-2" onSubmit={handleSubmit}>
-        {/* input fields to write notes*/}
         <div className="flex justify-center items-center">
           <input
             placeholder="Search for ticker..."
@@ -104,7 +104,7 @@ export default function Notes({ tab }: any) {
 
       {/* dynamically generated notes */}
       {/* header */}
-      {noteList.length ? (
+      {noteList.length && (
         <div className="flex">
           <div className="font-bold w-20 flex justify-center truncate">
             Ticker
@@ -116,18 +116,20 @@ export default function Notes({ tab }: any) {
           </div>
           <div className="px-4"></div>
         </div>
-      ) : null}
+      )}
 
-      {/* actual notes list */}
+      {/* the actual notes list */}
       {noteList.map((e: any, index) => (
         <div className="flex" key={index}>
-          <div className="border-y-2 w-20 flex justify-center">{e.ticker}</div>
-          <div className="border-2 w-24 flex justify-center">
-            $ {e.price[e.price.length - 1]}
+          <div className="border w-20 flex justify-center items-center">
+            {e.ticker}
           </div>
-          <div className="border-y-2 w-24 flex justify-center">
+          <div className="border w-24 flex justify-center items-center">
+            ${e.price[e.price.length - 1]}
+          </div>
+          <div className="border w-24 flex justify-center items-center">
             {e.priceTarget ? (
-              <div>$ {e.priceTarget}</div>
+              <div>${e.priceTarget}</div>
             ) : (
               <button
                 onClick={() => {
@@ -140,7 +142,7 @@ export default function Notes({ tab }: any) {
               </button>
             )}
           </div>
-          <div className="border-2 flex-grow flex justify-center">
+          <div className="border flex-grow flex justify-center items-center">
             {e.notes ? (
               e.notes
             ) : (
@@ -149,25 +151,26 @@ export default function Notes({ tab }: any) {
                   editButton();
                   setEditNote(e);
                 }}
-                className=" text-blue-400 underline"
+                className="text-blue-400 underline"
               >
                 Edit
               </button>
             )}
           </div>
           <button onClick={() => removeNote(index)} className="px-2">
-            ✖
+            <img src="/images/editButton.svg" className="m-1" />
           </button>
         </div>
       ))}
 
-      {modalOpen ? (
+      {/* your modal for editing the notes */}
+      {modalOpen && (
         <Modal
           editNote={editNote}
           setEditNote={setEditNote}
           setModalOpen={setModalOpen}
         />
-      ) : null}
+      )}
     </div>
   );
 }
