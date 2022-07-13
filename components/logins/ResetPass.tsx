@@ -1,6 +1,6 @@
 import { useState } from "react";
 
-export default function ResetPass({ setOptions }): JSX.Element {
+export default function ResetPass({ setOptions }: any): JSX.Element {
   const [loading, setLoading] = useState<boolean>(false);
   const resetPassword = (e: any) => {
     e.preventDefault();
@@ -40,7 +40,11 @@ export default function ResetPass({ setOptions }): JSX.Element {
         >
           Reset
         </button>
-        <button onClick={returnToLoginPage} className="w-full underline">
+        <button
+          type="button"
+          onClick={returnToLoginPage}
+          className="w-full underline"
+        >
           return to login
         </button>
       </div>

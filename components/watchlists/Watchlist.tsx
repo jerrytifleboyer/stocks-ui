@@ -16,13 +16,12 @@ export default function Watchlist({ tab, stockData }: any): JSX.Element {
                   {stock.ticker}
                 </div>
                 <div className="flex-grow" />
-                {stock.price[stock.price.length - 1]}
+                {stock.price.at(-1)}
                 <div
                   className={`ml-0.5 px-0.5 rounded text-white ${
                     parseFloat(
                       (
-                        ((stock.price[stock.price.length - 1] -
-                          stock.previousClosePrice) /
+                        ((stock.price.at(-1) - stock.previousClosePrice) /
                           stock.previousClosePrice) *
                         100
                       ).toFixed(2)
@@ -33,8 +32,7 @@ export default function Watchlist({ tab, stockData }: any): JSX.Element {
                 >
                   (
                   {(
-                    ((stock.price[stock.price.length - 1] -
-                      stock.previousClosePrice) /
+                    ((stock.price.at(-1) - stock.previousClosePrice) /
                       stock.previousClosePrice) *
                     100
                   ).toFixed(2)}

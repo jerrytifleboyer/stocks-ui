@@ -41,9 +41,7 @@ export default function login() {
 
   return (
     <div>
-      {options.resetPassPage ? (
-        <ResetPass setOptions={setOptions} />
-      ) : options.registerPage ? (
+      {options.registerPage ? (
         <Register setOptions={setOptions} />
       ) : (
         <form
@@ -66,7 +64,7 @@ export default function login() {
               type="password"
               required
               minLength={8}
-              maxLength={255}
+              maxLength={40}
               placeholder="password"
               onChange={(e) => {
                 setPassword(e.target.value);
@@ -81,13 +79,15 @@ export default function login() {
               Login
             </button>
             <div className="flex">
-              <button
+              {/* <button
+                type="button"
                 className="w-full underline"
                 onClick={switchToResetPassPage}
               >
                 reset password
-              </button>
+              </button> */}
               <button
+                type="button"
                 className="w-full underline"
                 onClick={switchToRegisterPage}
               >

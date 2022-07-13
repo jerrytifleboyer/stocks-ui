@@ -30,7 +30,7 @@ export default function index() {
   }, []);
 
   return (
-    <div className="min-h-screen bg-indigo-300">
+    <div className="min-h-screen bg-indigo-300 relative">
       <Header />
       <Tabs tab={tab} setTab={setTab} />
       <div className="flex justify-center content-center">

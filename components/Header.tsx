@@ -3,14 +3,14 @@ import { signOut } from "next-auth/react";
 
 export default function Header(): JSX.Element {
   const logout = () => {
-    signOut({ callbackUrl: `${window.location.origin}/login` });
+    signOut();
   };
 
   return (
     <>
       <ul className="grid grid-cols-7 font-bold text-xl p-2">
         <li className="col-start-4 flex justify-center text-center">
-          <Link href="/">My Stock Watchlist</Link>
+          <Link href="/">Trade Secrets</Link>
         </li>
         <li className="col-start-6 flex justify-end items-center hover:underline">
           <Link href="/suggestions">Suggestions</Link>

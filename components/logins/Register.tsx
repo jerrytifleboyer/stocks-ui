@@ -48,9 +48,6 @@ export default function Register({ setOptions }: any): JSX.Element {
           <div className="text-xl font-bold">
             Redirecting back to the login...
           </div>
-          <div className="text-green-500">
-            Verification code sent to your email.
-          </div>
         </div>
       ) : (
         <form
@@ -71,6 +68,8 @@ export default function Register({ setOptions }: any): JSX.Element {
                 type="email"
                 required
                 placeholder="email@email.com"
+                minLength={5}
+                maxLength={40}
                 onChange={(e) => {
                   setEmail(e.target.value);
                   setWarning("");
@@ -83,7 +82,7 @@ export default function Register({ setOptions }: any): JSX.Element {
               type="password"
               required
               minLength={8}
-              maxLength={255}
+              maxLength={40}
               placeholder="password"
               onChange={(e) => {
                 setPassword(e.target.value);
@@ -103,7 +102,7 @@ export default function Register({ setOptions }: any): JSX.Element {
                 type="password"
                 required
                 minLength={8}
-                maxLength={255}
+                maxLength={40}
                 placeholder="retype password"
                 onChange={(e) => {
                   setPassword2(e.target.value);
@@ -119,7 +118,11 @@ export default function Register({ setOptions }: any): JSX.Element {
               Register
             </button>
 
-            <button onClick={returnToLoginPage} className="w-full underline">
+            <button
+              type="button"
+              onClick={returnToLoginPage}
+              className="w-full underline"
+            >
               return to login
             </button>
           </div>

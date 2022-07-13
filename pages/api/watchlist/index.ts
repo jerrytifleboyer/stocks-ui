@@ -1,6 +1,7 @@
+import connectDB from "../../../backend/connectDB";
+connectDB();
 import type { NextApiRequest, NextApiResponse } from "next";
-import StockModel from "../../../models/Stock";
-
+import { StockModel } from "../../../models/Stock";
 export default async (req: NextApiRequest, res: NextApiResponse) => {
   const { method } = req;
 

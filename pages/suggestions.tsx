@@ -18,7 +18,7 @@ export default function suggestions() {
       <Header />
       <form
         onSubmit={handleSave}
-        className="flex justify-center items-center flex-col mt-40"
+        className="flex justify-center items-center flex-col mt-10"
       >
         <div className="border w-2/5 h-1/2 bg-indigo-100 rounded-xl">
           <div className="flex justify-center py-4 font-bold">Suggestions</div>
