@@ -1,5 +1,6 @@
 import { useState } from "react";
-export default function ResetPass({ setOptions }): JSX.Element {
+
+export default function ResetPass({ setOptions }: any): JSX.Element {
   const [loading, setLoading] = useState<boolean>(false);
   const resetPassword = (e: any) => {
     e.preventDefault();
@@ -19,13 +20,13 @@ export default function ResetPass({ setOptions }): JSX.Element {
       className="h-screen w-screen bg-indigo-300 flex justify-center items-center"
     >
       <div className="w-96 h-2/3 border-2 bg-neutral-100 rounded-xl shadow-xl flex justify-center items-center flex-col space-y-8">
-        <div className="text-xl font-bold">Reset Password</div>
+        <div className="text-xl font-bold">Password Reset</div>
         <div className="w-2/3">
-          {loading ? (
+          {loading && (
             <div className="flex justify-center text-green-500">
               GO CHECK YOUR EMAIL...
             </div>
-          ) : null}
+          )}
           <input
             type="email"
             required
@@ -39,7 +40,11 @@ export default function ResetPass({ setOptions }): JSX.Element {
         >
           Reset
         </button>
-        <button onClick={returnToLoginPage} className="w-full underline">
+        <button
+          type="button"
+          onClick={returnToLoginPage}
+          className="w-full underline"
+        >
           return to login
         </button>
       </div>

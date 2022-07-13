@@ -1,9 +1,17 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import ResetPass from "../components/logins/ResetPass";
 import Register from "../components/logins/Register";
+import { LoginPagesInterface } from "../helpers/interfaces/FrontendInterfaces";
+import { signIn } from "next-auth/react";
+import { useRouter } from "next/router";
+import { getSession } from "next-auth/react";
 
 export default function login() {
-  const [options, setOptions] = useState({
+  const router = useRouter();
+  const [email, setEmail] = useState<string>("");
+  const [password, setPassword] = useState<string>("");
+  const [warning, setWarning] = useState<string>("");
+  const [options, setOptions] = useState<LoginPagesInterface>({
     resetPassPage: false,
     registerPage: false,
   });
@@ -16,15 +24,24 @@ export default function login() {
     setOptions({ resetPassPage: false, registerPage: true });
   };
 
-  const login = (e: any) => {
+  const login = async (e: any) => {
     e.preventDefault();
+    const result = await signIn("credentials", {
+      redirect: false,
+      email,
+      password,
+    });
+    if (result.error) {
+      setWarning(result.error);
+    } else {
+      router.replace("/");
+    }
+    e.target.reset();
   };
 
   return (
     <div>
-      {options.resetPassPage ? (
-        <ResetPass setOptions={setOptions} />
-      ) : options.registerPage ? (
+      {options.registerPage ? (
         <Register setOptions={setOptions} />
       ) : (
         <form
@@ -37,14 +54,22 @@ export default function login() {
               type="email"
               required
               placeholder="email@email.com"
+              onChange={(e) => {
+                setEmail(e.target.value);
+                setWarning("");
+              }}
               className="w-2/3 p-1 rounded border"
             />
             <input
               type="password"
               required
               minLength={8}
-              maxLength={255}
+              maxLength={40}
               placeholder="password"
+              onChange={(e) => {
+                setPassword(e.target.value);
+                setWarning("");
+              }}
               className="w-2/3 p-1 rounded border"
             />
             <button
@@ -54,22 +79,40 @@ export default function login() {
               Login
             </button>
             <div className="flex">
-              <button
+              {/* <button
+                type="button"
                 className="w-full underline"
                 onClick={switchToResetPassPage}
               >
                 reset password
-              </button>
+              </button> */}
               <button
+                type="button"
                 className="w-full underline"
                 onClick={switchToRegisterPage}
               >
                 register
               </button>
             </div>
+            <div className="text-red-500">{warning}</div>
           </div>
         </form>
       )}
     </div>
   );
+}
+
+export async function getServerSideProps(context: any) {
+  const sessionActive = await getSession({ req: context.req });
+  if (sessionActive) {
+    return {
+      redirect: {
+        destination: "/",
+        permanent: false,
+      },
+    };
+  }
+  return {
+    props: { sessionActive },
+  };
 }

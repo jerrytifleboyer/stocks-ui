@@ -16,7 +16,7 @@ ChartJS.register(
   annotationPlugin
 );
 
-export default function Chart({ stockData }: any) {
+export default function Chart({ stockData }: any): JSX.Element {
   let data = {
     labels: stockData.time,
     datasets: [

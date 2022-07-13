@@ -1,6 +1,6 @@
-import { TabsInterface } from "../utils/interfaces/FrontendInterfaces";
+import { TabsInterface } from "../helpers/interfaces/FrontendInterfaces";
 
-export default function Tabs({ tab, setTab }: TabsInterface) {
+export default function Tabs({ tab, setTab }: TabsInterface): JSX.Element {
   return (
     <div className="flex justify-center">
       <button
