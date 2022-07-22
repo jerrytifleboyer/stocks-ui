@@ -1,10 +1,11 @@
 import { useState } from "react";
 
-export default function Modal({
+export function Modal({
   setModalOpen,
   editNote,
   notesList,
   setNotesList,
+  setWarning,
 }: any): JSX.Element {
   const [priceTarget, setPriceTarget] = useState<string>("");
   const [notes, setNotes] = useState<string>("");
@@ -25,13 +26,17 @@ export default function Modal({
   };
 
   const saveToDB = async () => {
-    await fetch("api/notes", {
-      method: "POST",
-      body: JSON.stringify(noteStructure),
-      headers: {
-        "Content-Type": "application/json",
-      },
-    });
+    try {
+      await fetch("api/notes", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(noteStructure),
+      });
+    } catch {
+      setWarning("i could not save this note, database error");
+    }
   };
 
   const handleSave = (e: any) => {

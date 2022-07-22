@@ -1,7 +1,4 @@
 import mongoose from "mongoose";
-import connectDB from "../backend/connectDB";
-connectDB();
-import { StockSchema } from "./Stock";
 
 const userSchema = new mongoose.Schema({
   email: {
@@ -17,7 +14,7 @@ const userSchema = new mongoose.Schema({
     minlength: 8,
     maxlength: 255,
   },
-  watchlist: [StockSchema],
+  watchlist: { type: mongoose.Types.ObjectId, ref: "stock" }, //ref just tells the user what model it's getting data from
   notes: [
     {
       ticker: { type: String, maxlength: 7 },

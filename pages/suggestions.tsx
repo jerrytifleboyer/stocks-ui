@@ -1,5 +1,5 @@
-import { useState, useEffect } from "react";
-import Header from "../components/Header";
+import { useState } from "react";
+import { Navbar } from "../components/Navbar";
 import { getSession } from "next-auth/react";
 
 export default function suggestions() {
@@ -15,7 +15,7 @@ export default function suggestions() {
 
   return (
     <div className="h-screen bg-indigo-300">
-      <Header />
+      <Navbar />
       <form
         onSubmit={handleSave}
         className="flex justify-center items-center flex-col mt-10"

@@ -1,4 +1,4 @@
-export default function SearchBar({
+export function SearchBar({
   handleSubmit,
   setTicker,
   setWarning,

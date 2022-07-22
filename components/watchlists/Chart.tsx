@@ -16,8 +16,8 @@ ChartJS.register(
   annotationPlugin
 );
 
-export default function Chart({ stockData }: any): JSX.Element {
-  let data = {
+export function Chart({ stockData }: any): JSX.Element {
+  let data: any = {
     labels: stockData.time,
     datasets: [
       {
@@ -28,7 +28,7 @@ export default function Chart({ stockData }: any): JSX.Element {
       },
     ],
   };
-  let options = {
+  let options: any = {
     scales: {
       y: {
         beginAtZero: false,
@@ -60,6 +60,6 @@ export default function Chart({ stockData }: any): JSX.Element {
       },
     },
   };
-  //i have no idea how to fix typescript, but it works
+  //i have no idea how to fix this typescript, but it works
   return <Line data={data} options={options} />;
 }

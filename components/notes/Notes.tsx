@@ -1,18 +1,18 @@
-import { useState, useEffect, Key } from "react";
-import Modal from "./Modal";
-import SearchBar from "../SearchBar";
+import { useState, useEffect } from "react";
+import { useFetch } from "../../helpers/hooks/useFetch";
+import { Modal } from "./Modal";
+import { SearchBar } from "../SearchBar";
 import {
   NotesListInterface,
   TickerDataInterface,
 } from "../../helpers/interfaces/FrontendInterfaces";
 
-export default function Notes({ tab }: any): JSX.Element {
+export function Notes({ tab }: any): JSX.Element {
   let foundInNotes = false;
-  const [notesList, setNotesList] = useState<NotesListInterface[]>([]); //entire note list
-  const [tickerData, setTickerData] = useState<TickerDataInterface[]>([]); //all ticker's data from the watchlist
+  const [notesList, setNotesList] = useState<NotesListInterface[]>([]); //controls the users note
   const [modalOpen, setModalOpen] = useState<boolean>(false); //opening/closing modal
   const [ticker, setTicker] = useState<string>(""); //user search value, used in the search bar
-  const [warning, setWarning] = useState<string>(""); //warning when your ticker's already in the list
+  const [warning, setWarning] = useState<string>(""); //warn user
   const [editNote, setEditNote] = useState<object>({}); //holds the note object currently being editted
 
   //gets all of the users notes
@@ -23,36 +23,28 @@ export default function Notes({ tab }: any): JSX.Element {
         const data = await response.json();
         setNotesList(data);
       } catch (err) {
-        console.error("could not load notes and: ", err);
+        setWarning("something went wrong, could not load notes...");
       }
     };
     loadSavedNotes();
   }, []);
 
   //gets all the stock data
-  useEffect(() => {
-    const getTickerData = async () => {
-      try {
-        const response = await fetch("/api/notes/getTickerData");
-        const data = await response.json();
-        setTickerData(data);
-      } catch (err) {
-        console.error("could not get ticker data and: ", err);
-      }
-    };
-    getTickerData();
-  }, []);
+  const { data }: { data: TickerDataInterface[] } = useFetch(
+    "/api/tickerData",
+    false
+  );
 
   //if i have the data on hand, fill out the ticker, name, currentPrice, and date
   const addNoteToList = () => {
-    for (let stock of tickerData) {
+    for (let stock of data) {
       if (ticker === stock.ticker) {
         const newNote: any = [
           {
             ticker: stock.ticker,
             name: stock.name,
             date: new Date().toDateString(),
-            price: stock.price.at(-1),
+            price: stock.currentPrice,
           },
           ...notesList,
         ];
@@ -90,6 +82,11 @@ export default function Notes({ tab }: any): JSX.Element {
     e.preventDefault();
   };
 
+  const edit = (e: any, note: NotesListInterface) => {
+    e.preventDefault();
+    setEditNote(note);
+    setModalOpen(true);
+  };
   // const removeNote = (index: number) => {
   //   noteList.splice(index, 1);
   //   setNoteList([...noteList]);
@@ -155,9 +152,7 @@ export default function Notes({ tab }: any): JSX.Element {
               ) : (
                 <button
                   onClick={(e) => {
-                    e.preventDefault();
-                    setEditNote(note);
-                    setModalOpen(true);
+                    edit(e, note);
                   }}
                   className="text-blue-400 underline"
                 >
@@ -172,9 +167,7 @@ export default function Notes({ tab }: any): JSX.Element {
               ) : (
                 <button
                   onClick={(e) => {
-                    e.preventDefault();
-                    setEditNote(note);
-                    setModalOpen(true);
+                    edit(e, note);
                   }}
                   className="text-blue-400 underline"
                 >
@@ -199,6 +192,7 @@ export default function Notes({ tab }: any): JSX.Element {
           editNote={editNote}
           notesList={notesList}
           setNotesList={setNotesList}
+          setWarning={setWarning}
         />
       )}
     </div>

@@ -1,17 +1,23 @@
 import { useState, useEffect } from "react";
 
-// //good practice for fetch, create a fetch hook
-// export const useFetch = (url: string) => {
-//   const [state, setState] = useState({ data: null, loading: true });
-//   useEffect(() => {
-//     // setState((state) => ({ data: state.data, loading: true }));
-//     fetch(url)
-//       .then((res) => res.json())
-//       .then((data) => {
-//         setState({ data, loading: false });
-//       });
-//   }, [url, setState]);
-// };
-// //then your main component can just:
-// //const {data, loading} = useFetch('api')
-// //<div>{loading?"loading...":data}
+const everyTwoMinutes: number = 1000 * 60 * 2;
+
+export function useFetch(api: string, refresh: boolean) {
+  const [state, setState] = useState({ data: [], loading: true });
+  useEffect(() => {
+    const getData = async () => {
+      try {
+        const response = await fetch(api);
+        const data = await response.json();
+        setState({ data, loading: false });
+        if (refresh) {
+          setTimeout(getData, everyTwoMinutes);
+        }
+      } catch {
+        setState({ data: [], loading: false });
+      }
+    };
+    getData();
+  }, [api, setState]);
+  return state;
+}

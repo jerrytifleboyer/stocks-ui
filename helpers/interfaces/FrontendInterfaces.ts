@@ -22,6 +22,7 @@ export interface TickerDataInterface {
   name: String;
   date: String;
   previousClosePrice: Number;
+  currentPrice: Number;
   price: [Number];
   time: [Number];
 }
