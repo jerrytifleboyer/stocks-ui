@@ -76,9 +76,9 @@ export function Modal({
           <div className="flex justify-center items-center flex-col h-1/2">
             <div className="font-bold block">Notes:</div>
             <textarea
-              className="w-5/6 h-24 resize-none pl-1"
+              className="w-5/6 h-24 pl-1"
               placeholder="e.g: i like the stock!"
-              maxLength={255}
+              maxLength={99}
               onChange={(e) => {
                 setNotes(e.target.value);
               }}

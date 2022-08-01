@@ -5,8 +5,15 @@ import { Tabs } from "../components/Tabs";
 import { Watchlist } from "../components/watchlists/Watchlist";
 import { Notes } from "../components/notes/Notes";
 import { LeftContent } from "../components/LeftContent";
+import { useFetch } from "../helpers/hooks/useFetch";
+import { TickerDataInterface } from "../helpers/interfaces/FrontendInterfaces";
 
 export default function index() {
+  //gets all the stock data
+  const { data }: { data: TickerDataInterface[] } = useFetch(
+    "/api/tickerData",
+    false
+  );
   const [tab, setTab] = useState<number>(1);
 
   return (
@@ -15,8 +22,8 @@ export default function index() {
       <div className="flex">
         <LeftContent />
         <div className="w-full rounded bg-indigo-50 py-4 mb-4">
-          <Watchlist tab={tab} />
-          <Notes tab={tab} />
+          <Watchlist tab={tab} checklist={data} />
+          <Notes tab={tab} checklist={data} />
         </div>
         <Tabs tab={tab} setTab={setTab} />
       </div>

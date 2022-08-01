@@ -34,10 +34,10 @@ export default function Register({ setOptions }: any): JSX.Element {
     const data = await response.json();
 
     if (!response.ok) {
-      setWarning(data.error);
+      setWarning("i cannot register you");
     } else {
       setLoading(true);
-      setTimeout(returnToLoginPage, 2000);
+      setTimeout(returnToLoginPage, 1000);
     }
   };
 

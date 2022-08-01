@@ -1,12 +1,25 @@
 import { Chart } from "./Chart";
-import { checkIfMarketOpen } from "../../backend/checkIfMarketOpen";
-import { useFetch } from "../../helpers/hooks/useFetch";
 import { Loading } from "../Loading";
+import { useFetch } from "../../helpers/hooks/useFetch";
+import { checkIfMarketOpen } from "../../backend/checkIfMarketOpen";
+import { TickerDataInterface } from "../../helpers/interfaces/FrontendInterfaces";
+import { SearchBar } from "../SearchBar";
 
-export function Watchlist({ tab }: any): JSX.Element {
-  const { data } = useFetch("/api/watchlist", checkIfMarketOpen());
+export function Watchlist({
+  tab,
+  checklist,
+}: {
+  tab: number;
+  checklist: TickerDataInterface[];
+}): JSX.Element {
+  const { data }: { data: TickerDataInterface[] } = useFetch(
+    "/api/watchlist",
+    checkIfMarketOpen()
+  );
+
   return (
     <div className={tab === 1 ? "" : "hidden"}>
+      {/* <SearchBar /> */}
       {data.length ? (
         <div className="flex flex-wrap justify-evenly gap-y-4">
           {data.map((stock: any) => (

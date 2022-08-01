@@ -12,9 +12,9 @@ const userSchema = new mongoose.Schema({
     type: String,
     required: true,
     minlength: 8,
-    maxlength: 255,
+    maxlength: 99,
   },
-  watchlist: { type: mongoose.Types.ObjectId, ref: "stock" }, //ref just tells the user what model it's getting data from
+  watchlist: [{ type: mongoose.SchemaTypes.ObjectId, ref: "stock" }], //ref just tells the user what model it's getting data from
   notes: [
     {
       ticker: { type: String, maxlength: 7 },
@@ -22,7 +22,7 @@ const userSchema = new mongoose.Schema({
       date: { type: String },
       price: { type: Number },
       priceTarget: { type: String, maxlength: 7 },
-      notes: { type: String, maxlength: 255 },
+      notes: { type: String, maxlength: 99 },
     },
   ],
 });

@@ -31,8 +31,9 @@ export default function login() {
       email,
       password,
     });
-    if (result.error) {
-      setWarning(result.error);
+
+    if (result?.error) {
+      setWarning("something went wrong");
     } else {
       router.replace("/");
     }

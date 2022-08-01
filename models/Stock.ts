@@ -15,5 +15,3 @@ const stockSchema = new mongoose.Schema({
 const COLLECTION_NAME = "stock";
 export const StockModel =
   mongoose.models.stock || mongoose.model(COLLECTION_NAME, stockSchema);
-
-export const StockSchema = stockSchema;

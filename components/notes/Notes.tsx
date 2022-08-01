@@ -7,7 +7,13 @@ import {
   TickerDataInterface,
 } from "../../helpers/interfaces/FrontendInterfaces";
 
-export function Notes({ tab }: any): JSX.Element {
+export function Notes({
+  tab,
+  checklist,
+}: {
+  tab: number;
+  checklist: TickerDataInterface[];
+}): JSX.Element {
   let foundInNotes = false;
   const [notesList, setNotesList] = useState<NotesListInterface[]>([]); //controls the users note
   const [modalOpen, setModalOpen] = useState<boolean>(false); //opening/closing modal
@@ -20,8 +26,10 @@ export function Notes({ tab }: any): JSX.Element {
     const loadSavedNotes = async () => {
       try {
         const response = await fetch("api/notes");
-        const data = await response.json();
-        setNotesList(data);
+        const { success, notes } = await response.json();
+        if (success) {
+          setNotesList(notes);
+        }
       } catch (err) {
         setWarning("something went wrong, could not load notes...");
       }
@@ -29,15 +37,9 @@ export function Notes({ tab }: any): JSX.Element {
     loadSavedNotes();
   }, []);
 
-  //gets all the stock data
-  const { data }: { data: TickerDataInterface[] } = useFetch(
-    "/api/tickerData",
-    false
-  );
-
   //if i have the data on hand, fill out the ticker, name, currentPrice, and date
   const addNoteToList = () => {
-    for (let stock of data) {
+    for (let stock of checklist) {
       if (ticker === stock.ticker) {
         const newNote: any = [
           {
@@ -123,68 +125,74 @@ export function Notes({ tab }: any): JSX.Element {
           <div className="flex items-center font-bold justify-center flex-grow">
             Notes
           </div>
-          <div className="px-6"></div>
+          <div className="px-6" />
         </div>
       ) : (
-        <div className="flex justify-center">
+        <div className="flex justify-center items-center text-lg">
           It seems that you have no notes
         </div>
       )}
 
-      {notesList.length &&
-        notesList.map((note: NotesListInterface) => (
-          <div key={note.ticker.toString()} className="flex odd:bg-indigo-100">
+      {/* for some reason it returns 0 if i use && */}
+      {notesList.length
+        ? notesList.map((note: NotesListInterface) => (
             <div
-              className={
-                note.name ? "mx-2 w-28" : "flex items-center mx-2 w-28"
-              }
+              key={note.ticker.toString()}
+              className="flex odd:bg-indigo-100"
             >
-              <div className="text-lg">{note.ticker}</div>
-              <div className="text-sm truncate">{note.name}</div>
-            </div>
-            <div className="flex items-center w-20 mx-2 text-xl">
-              {note.price && <div>${note.price}</div>}
-            </div>
+              <div
+                className={
+                  note.name ? "mx-2 w-28" : "flex items-center mx-2 w-28"
+                }
+              >
+                <div className="text-lg">{note.ticker}</div>
+                <div className="text-sm truncate">{note.name}</div>
+              </div>
+              <div className="flex items-center w-20 mx-2 text-xl">
+                {note.price && <div>${note.price}</div>}
+              </div>
 
-            <div className="flex items-center w-20 mx-2 text-xl">
-              {note.priceTarget ? (
-                <div>${note.priceTarget}</div>
-              ) : (
-                <button
-                  onClick={(e) => {
-                    edit(e, note);
-                  }}
-                  className="text-blue-400 underline"
-                >
-                  Edit
-                </button>
-              )}
+              <div className="flex items-center w-20 mx-2 text-xl">
+                {note.priceTarget ? (
+                  <div>${note.priceTarget}</div>
+                ) : (
+                  <button
+                    onClick={(e) => {
+                      edit(e, note);
+                    }}
+                    className="text-blue-400 underline"
+                  >
+                    Edit
+                  </button>
+                )}
+              </div>
+              <div className="flex items-center w-28 mx-2">{note.date}</div>
+              <div className="flex items-center justify-center flex-grow text-lg mx-2">
+                {note.notes ? (
+                  <div>{note.notes}</div>
+                ) : (
+                  <button
+                    onClick={(e) => {
+                      edit(e, note);
+                    }}
+                    className="text-blue-400 underline"
+                  >
+                    Edit
+                  </button>
+                )}
+              </div>
+              <button
+                onClick={(e) => {
+                  handleEditNote(e);
+                }}
+                className="px-2"
+              >
+                <img src="/images/editButton.svg" className="m-1" />
+              </button>
             </div>
-            <div className="flex items-center w-28 mx-2">{note.date}</div>
-            <div className="flex items-center justify-center flex-grow text-lg mx-2">
-              {note.notes ? (
-                <div>{note.notes}</div>
-              ) : (
-                <button
-                  onClick={(e) => {
-                    edit(e, note);
-                  }}
-                  className="text-blue-400 underline"
-                >
-                  Edit
-                </button>
-              )}
-            </div>
-            <button
-              onClick={(e) => {
-                handleEditNote(e);
-              }}
-              className="px-2"
-            >
-              <img src="/images/editButton.svg" className="m-1" />
-            </button>
-          </div>
-        ))}
+          ))
+        : null}
+
       {/* your modal for editing the notes */}
       {modalOpen && (
         <Modal
