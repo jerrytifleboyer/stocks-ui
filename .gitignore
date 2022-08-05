@@ -39,7 +39,7 @@ yarn-error.log*
 /backend
 
 #your master list and random notes
-masterList.ts
+master.json
 notes.js
 newFeatures.js
 seasonalTrends.js

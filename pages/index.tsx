@@ -10,10 +10,7 @@ import { TickerDataInterface } from "../helpers/interfaces/FrontendInterfaces";
 
 export default function index() {
   //gets all the stock data
-  const { data }: { data: TickerDataInterface[] } = useFetch(
-    "/api/tickerData",
-    false
-  );
+  const { data }: { data: TickerDataInterface[] } = useFetch("/api/tickerData");
   const [tab, setTab] = useState<number>(1);
 
   return (

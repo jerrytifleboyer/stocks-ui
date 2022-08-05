@@ -10,6 +10,7 @@ export function SearchBar({
         <input
           placeholder="Search for ticker..."
           className="w-64 truncate mx-1 p-1"
+          required
           onChange={(e) => {
             setTicker(e.target.value.toUpperCase().trim());
             setWarning("");

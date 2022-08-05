@@ -1,5 +1,4 @@
 import { useState, useEffect } from "react";
-import { useFetch } from "../../helpers/hooks/useFetch";
 import { Modal } from "./Modal";
 import { SearchBar } from "../SearchBar";
 import {
@@ -59,7 +58,7 @@ export function Notes({
 
   const handleSubmit = (e: any) => {
     e.preventDefault();
-    //check if the notes are already in your list
+    //stops you if you already have a note
     if (notesList.length) {
       for (let note of notesList) {
         if (ticker === note["ticker"]) {
@@ -68,12 +67,12 @@ export function Notes({
           break;
         }
       }
-      //it's not in your list, add it
+      //it's not in your notes, add it
       if (!foundInNotes) {
         addNoteToList();
       }
     }
-    //you have no notes, add note
+    //adding your first note
     else {
       addNoteToList();
     }
