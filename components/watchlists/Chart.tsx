@@ -7,6 +7,7 @@ import {
 } from "chart.js";
 import { Line } from "react-chartjs-2";
 import annotationPlugin from "chartjs-plugin-annotation";
+import { TickerDataInterface } from "../../helpers/interfaces/FrontendInterfaces";
 
 ChartJS.register(
   LineElement,
@@ -16,8 +17,12 @@ ChartJS.register(
   annotationPlugin
 );
 
-export function Chart({ stockData }: any): JSX.Element {
-  let data: any = {
+export function Chart({
+  stockData,
+}: {
+  stockData: TickerDataInterface;
+}): JSX.Element {
+  const data: any = {
     labels: stockData.time,
     datasets: [
       {
@@ -28,7 +33,10 @@ export function Chart({ stockData }: any): JSX.Element {
       },
     ],
   };
-  let options: any = {
+
+  const options: any = {
+    animation: false, //optional, for faster performance
+    spanGaps: true, //optional, for faster performance
     scales: {
       y: {
         beginAtZero: false,
@@ -60,6 +68,5 @@ export function Chart({ stockData }: any): JSX.Element {
       },
     },
   };
-  //i have no idea how to fix this typescript, but it works
   return <Line data={data} options={options} />;
 }

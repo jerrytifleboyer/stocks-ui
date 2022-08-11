@@ -29,7 +29,7 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
           { ticker: body.ticker },
           { _id: 1 }
         );
-        if (stock._id) {
+        if (stock) {
           const updateData = await UserModel.updateOne(
             { email: session!.user!.email },
             {

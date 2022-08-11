@@ -9,20 +9,21 @@ export interface LoginPagesInterface {
 }
 
 export interface NotesListInterface {
-  ticker: String;
-  name: String;
-  date: String;
-  price: Number;
-  priceTarget: String;
-  notes: String;
+  ticker: string;
+  name: string;
+  date: string;
+  price: number;
+  priceTarget: string;
+  notes: string;
 }
 
 export interface TickerDataInterface {
-  ticker: String;
-  name: String;
-  date: String;
-  previousClosePrice: Number;
-  currentPrice: Number;
-  price: [Number];
-  time: [Number];
+  _id: string;
+  ticker: string;
+  name: string;
+  date: string;
+  previousClosePrice: number;
+  currentPrice: number;
+  price: [number];
+  time: [number];
 }

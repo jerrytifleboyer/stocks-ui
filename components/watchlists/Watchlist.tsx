@@ -1,9 +1,9 @@
-import { Chart } from "./Chart";
-import { Loading } from "../Loading";
 import { checkIfMarketOpen } from "../../backend/checkIfMarketOpen";
-import { TickerDataInterface } from "../../helpers/interfaces/FrontendInterfaces";
+import { Loading } from "../Loading";
 import { SearchBar } from "../SearchBar";
 import { useState, useEffect } from "react";
+import { TickerDataInterface } from "../../helpers/interfaces/FrontendInterfaces";
+import { MemoedChart } from "./MemoedChart";
 
 export function Watchlist({
   tab,
@@ -12,11 +12,10 @@ export function Watchlist({
   tab: number;
   checklist: TickerDataInterface[];
 }): JSX.Element {
-  let foundInWatchlist = false;
   const [myWatchlist, setMyWatchlist] = useState<TickerDataInterface[]>([]);
   const [ticker, setTicker] = useState<string>(""); //used to do a post request to add a stock to my watchlist, and then find it in the checklist to add to my view
   const [warning, setWarning] = useState<string>("");
-
+  let foundInWatchlist = false;
   const EVERY_TWO_MINUTES = 1000 * 60 * 2;
 
   useEffect(() => {
@@ -26,12 +25,14 @@ export function Watchlist({
       setMyWatchlist(data);
       if (checkIfMarketOpen()) {
         setTimeout(getWatchlist, EVERY_TWO_MINUTES);
+      } else {
+        console.log("market closed");
       }
     };
     getWatchlist();
   }, []);
 
-  const saveToDB = async (ticker: String) => {
+  const saveToDB = async (ticker: string) => {
     try {
       await fetch("api/watchlist", {
         method: "POST",
@@ -90,45 +91,7 @@ export function Watchlist({
         contentLoaded={myWatchlist}
       />
       {myWatchlist.length ? (
-        <div className="flex flex-wrap justify-evenly gap-y-4 mt-4">
-          {myWatchlist.map((stock: any) => (
-            <div className="w-48 border-2 rounded border-black" key={stock._id}>
-              <div className="flex">
-                <div
-                  className={`px-1 rounded ${
-                    stock.ticker === "SPY" ? "bg-yellow-400" : ""
-                  }`}
-                >
-                  {stock.ticker}
-                </div>
-                <div className="flex-grow" />
-                {stock.currentPrice}
-                <div
-                  className={`ml-0.5 px-0.5 rounded text-white ${
-                    parseFloat(
-                      (
-                        ((stock.currentPrice - stock.previousClosePrice) /
-                          stock.previousClosePrice) *
-                        100
-                      ).toFixed(2)
-                    ) > 0
-                      ? "bg-emerald-500"
-                      : "bg-red-500"
-                  }`}
-                >
-                  (
-                  {(
-                    ((stock.currentPrice - stock.previousClosePrice) /
-                      stock.previousClosePrice) *
-                    100
-                  ).toFixed(2)}
-                  %)
-                </div>
-              </div>
-              <Chart stockData={stock} />
-            </div>
-          ))}
-        </div>
+        <MemoedChart myWatchlist={myWatchlist} />
       ) : (
         <Loading />
       )}
