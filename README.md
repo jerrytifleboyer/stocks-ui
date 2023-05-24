@@ -1,5 +1,7 @@
 # my stocks-ui, watch my assets go to 0
-skeleton project, will update when im bored
+
+skeleton project: (deprecated)
+for tracking daily stock changes, and allowing the user to add price targets and notes; app is currently being revamped
 
 *NEW
 ![image](https://user-images.githubusercontent.com/53534200/168167226-39605689-3bb0-4a12-b340-54bcd96c8433.png)
